@@ -23,11 +23,14 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['id', 'username']
 
 class MemberSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(source='user.username', read_only=True)
+    username = serializers.ReadOnlyField(source='user.username')
+    
     class Meta:
         model = Member
-        fields = ['id', 'user', 'username', 'circle', 'status', 'joined_at', 'profile_pic']
-
+        fields = '__all__'
+        # 👇 THIS LINE IS THE FIX. It tells Django "Don't require 'user' in the JSON"
+        read_only_fields = ['user', 'balance', 'status']
+        
 class PaymentSerializer(serializers.ModelSerializer):
     member_name = serializers.CharField(source='member.user.username', read_only=True)
     class Meta:

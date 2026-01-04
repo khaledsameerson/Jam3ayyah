@@ -32,12 +32,14 @@ class CircleViewSet(viewsets.ModelViewSet):
 
 # 3. MEMBERS
 class MemberViewSet(viewsets.ModelViewSet):
+    queryset = Member.objects.all()
     serializer_class = MemberSerializer
     permission_classes = [permissions.IsAuthenticated]
-    def get_queryset(self):
-        return Member.objects.all()
+
+    # 👇 ADD THIS MAGIC METHOD
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user, status='PENDING')
+        # This automatically sets 'user' to the person sending the request
+        serializer.save(user=self.request.user)
 
 # 4. PAYMENTS (THIS IS THE AUTO-NOTIFICATION ENGINE 🔔)
 class PaymentViewSet(viewsets.ModelViewSet):
